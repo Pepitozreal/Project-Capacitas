@@ -9,7 +9,7 @@ import {
   AsyncStorage
 } from "react-native";
 import { Camera, Permissions } from "expo";
-
+import Storage from "../Providers/storage.js";
 export default class CameraModule extends React.Component {
   constructor(props) {
     super(props);
@@ -47,8 +47,9 @@ export default class CameraModule extends React.Component {
             style={{ ...styles.cameraButton, left: dimensions.width / 2 - 50 }}
             onPress={() => {
               this.camera
-                .takePictureAsync({ quality: 1, base64: false })
-                .then(myKey => {
+                .takePictureAsync({ quality: 1, base64: true })
+                .then(data => { Storage.save.image
+
                   //ALLT VI VILL GÖRA MED BILD
                 });
             }}
