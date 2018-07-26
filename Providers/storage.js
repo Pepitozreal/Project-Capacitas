@@ -30,7 +30,9 @@ export default Storage = {
     },
     loadImage: async (key) => {
         const files = await FS.readDirectoryAsync(dir)
-        Storage.Image = dir + files[0];
+        if (files.length > 0) {
+            Storage.Image = dir + files[files.length-1];
+        }
 
     },
     loadAllImages: () => {
