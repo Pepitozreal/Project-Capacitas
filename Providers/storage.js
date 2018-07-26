@@ -4,6 +4,7 @@ import {AsyncStorage} from 'react-native';
 
 export default Storage = {
     saveImage: (image) => {
+        alert(image.length)
         AsyncStorage.setItem("Image", image)
         .then(() => alert("saved!"))
         .catch((e) => alert(e))

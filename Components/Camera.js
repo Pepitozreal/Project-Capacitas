@@ -47,7 +47,7 @@ export default class CameraModule extends React.Component {
             style={{ ...styles.cameraButton, left: dimensions.width / 2 - 50 }}
             onPress={() => {
               this.camera
-                .takePictureAsync({ quality: 1, base64: true })
+                .takePictureAsync({ quality: 0.9, base64: true })
                 .then(data => { 
                   Storage.saveImage(data.base64)
                   //ALLT VI VILL GÖRA MED BILD
