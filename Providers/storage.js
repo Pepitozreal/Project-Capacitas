@@ -1,27 +1,18 @@
 import {AsyncStorage} from 'react-native';
-export default class Storage extends React.Component { 
-    constructor(props){
-        super(props)
-
-        this.state = {
-            pictureBase64: null,
-        }
-    } 
-    }
 
 
 
-const Storage = {
+export default Storage = {
     saveImage: (image) => {
-        AsyncStorage.setItem("Image", this.state.pictureBase64)
+        AsyncStorage.setItem("Image", image)
     },
     loadImage: (key) => {
-       AsyncStorage.getItem("Image" ), (result) => {
-            this.setState({pictureBase64: result});
-       }
+       AsyncStorage.getItem("Image", (result) => {
+            Storage.Image = result;
+       })
     },
     loadAllImages: () => {
         // Loads all images from storage
-    }
+    },
+    Image: null
 }
-

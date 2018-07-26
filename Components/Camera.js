@@ -48,8 +48,8 @@ export default class CameraModule extends React.Component {
             onPress={() => {
               this.camera
                 .takePictureAsync({ quality: 1, base64: true })
-                .then(data => { Storage.save.image
-
+                .then(data => { 
+                  Storage.saveImage(data.base64)
                   //ALLT VI VILL GÖRA MED BILD
                 });
             }}
