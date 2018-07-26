@@ -9,9 +9,11 @@ export default Storage = {
         .catch((e) => alert(e))
     },
     loadImage: (key) => {
-       AsyncStorage.getItem("Image", (result) => {
+       AsyncStorage.getItem("Image")
+       .then((result) => { 
             Storage.Image = result;
        })
+       .catch(e => alert(e))
     },
     loadAllImages: () => {
         // Loads all images from storage
