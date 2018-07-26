@@ -10,7 +10,7 @@ constructor(props) {
       text: "Press to change",
      
     }
-} 
+}  
 
 
     render() {
