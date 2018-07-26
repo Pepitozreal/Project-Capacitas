@@ -8,7 +8,6 @@ constructor(props) {
     
     this.state = {
       text: "Press to change",
-     
     }
 }  
 
