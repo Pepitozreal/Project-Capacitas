@@ -28,13 +28,10 @@ export default Storage = {
         // Move image to working directory
         FS.moveAsync({from:uri, to:newUri}).catch(e => alert(e))
     },
-    loadImage: (key) => {
-        FS.readDirectoryAsync(dir).then((r) => {
-            if (r.length > 0) {
-                // Return first image in directory (NEEDS TO BE CHANGED)
-                Storage.Image = dir + r[0];
-            }
-        })
+    loadImage: async (key) => {
+        const files = await FS.readDirectoryAsync(dir)
+        Storage.Image = dir + files[0];
+
     },
     loadAllImages: () => {
         // Loads all images from storage
