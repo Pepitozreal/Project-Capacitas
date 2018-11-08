@@ -59,7 +59,7 @@ export default class App extends React.Component {
               this.pullup = ref;
             }
           }
-          allowSwipe = {this.pageIndex !== data.length -1}
+          allowSwipe = {this.state.pageIndex !== (data.length-1)}
           topic = {data[this.state.pageIndex]}
           onPictureTaken = {() => {
             Storage.loadAllTopics().then(topics => {this.setState({topics: topics})})

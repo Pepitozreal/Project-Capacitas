@@ -24,12 +24,13 @@ import { Ionicons } from '@expo/vector-icons';
 dim = Dimensions.get("screen")
 
 export default class SlidingCamera extends React.Component {
+    allowSwipe;
     constructor(props) {
       super(props);
 
       this._panResponder = PanResponder.create({
-          onStartShouldSetPanResponder: () => this.props.canSwipe,
-          onMoveShouldSetPanResponder: () => this.props.canSwipe,
+          onStartShouldSetPanResponder: () => this.allowSwipe,
+          onMoveShouldSetPanResponder: () => this.allowSwipe,
           onPanResponderGrant: () => {
           },
           onPanResponderMove: (evt, gestureState) => {
@@ -44,7 +45,7 @@ export default class SlidingCamera extends React.Component {
 
           },
           onPanResponderRelease: (evt, gestureState) => {
-              if (gestureState.dy < 0) {
+              if (gestureState.vy < 0) {
 
                 Animated.timing(
                     this.state.progress,
@@ -66,12 +67,19 @@ export default class SlidingCamera extends React.Component {
               }
           }
       })
-  
+
+
+      this.allowSwipe = this.props.allowSwipe
       this.state = {
           isOpen: false,
+
           progress: new Animated.Value(0),
           headerOffset: new Animated.Value(0)
       };
+    }
+
+    componentWillReceiveProps(newProps) {
+        this.allowSwipe = newProps.allowSwipe
     }
 
     close() {
