@@ -16,7 +16,6 @@ import {
 } from "react-native";
 import { Camera, Permissions } from "expo";
 import Storage from "../Providers/storage.js";
-import Drawer from 'react-native-drawer'
 import CameraModule from './Camera.js'
 
 import { Ionicons } from '@expo/vector-icons';
