@@ -8,58 +8,91 @@ import {
   TouchableHighlight,
   AsyncStorage,
   Button,
-  Image
+  Image,
+  FlatList
 } from "react-native";
 import CameraNew from "./Components/Camera.js";
+import CreateTopic from "./Components/CreateTopic.js"
 import Storage from "./Providers/storage.js";
+import TopicView from "./Components/Topic.js"
+import SlidingCamera from "./Components/SlidingCamera.js"
+dim = Dimensions.get("screen")
 export default class App extends React.Component {
+
+  pullup;
+  list;
   constructor(props) {
     super(props);
 
     this.state = {
-      text: "Press to change"
+      topics: [],
+      pageIndex: 0
     };
+    Storage.loadAllTopics().then(topics => {this.setState({topics: topics})})
   }
-
+  _onTopicCreated(topic) {
+    newTopics = this.state.topics;
+    newTopics.push(topic)
+    this.setState({topics: newTopics})
+  }
+  _renderChild(item) {
+    if (item.item.id == "createTopic") {
+      return (
+        <CreateTopic onTopicCreated = {this._onTopicCreated.bind(this)}/>
+      )
+    } else {
+      return <TopicView 
+        topic = {item.item}
+        onTopicDeleted = {() => Storage.loadAllTopics().then(topics => {this.setState({topics: topics})})}
+        isActive = {item.index + "" + this.state.pageIndex}/>
+    }
+  }
   render() {
-    text = this.state.text;
-    number = this.state.number;
+    data = this.state.topics.slice();
+    data.push({id: "createTopic"});
     return (
-      <ViewPagerAndroid style={styles.viewPager}>
-        <View style={styles.container}>
-          <Text
-            style={styles.text}
-            onPress={() => {
-              alert("Hej");
+      <View style = {{flex:1, width: dim.width}}>
+        <SlidingCamera 
+          ref = {
+            (ref) => {
+              this.pullup = ref;
+            }
+          }
+          topic = {data[this.state.pageIndex]}
+          onPictureTaken = {() => {
+            Storage.loadAllTopics().then(topics => {this.setState({topics: topics})})
+            this.pullup.close()
+          }}>
+          <FlatList
+            style = {{height: dim.height, width: dim.width}}
+            data = {data}
+            keyExtractor = {(item, id) => item.id}
+            renderItem = {this._renderChild.bind(this)}
+            horizontal = {true}
+            pagingEnabled = {true}
+            ref = {ref => {
+              this.list = ref
             }}
-          >
-            Click me
-          </Text>
-          <Text
-            style={{ marginLeft: number, ...styles.text }}
-            onPress={() => {
-              this.setState({ text: "I changed!" });
+            onScrollEndDrag = {evt => { 
+              const newIndex = evt.nativeEvent.velocity.x > 0 ? Math.floor(evt.nativeEvent.contentOffset.x/dim.width) : Math.ceil(evt.nativeEvent.contentOffset.x/dim.width) 
+              this.list.scrollToIndex({
+                index: newIndex,
+                viewOffset: 0,
+                viewPosition: 0,
+                animated: true
+              })
+              this.setState({pageIndex:newIndex})
             }}
-          >
-            {" "}
-            {text}
-          </Text>
-        </View>
-
-        <View style={styles.container}>
-          <CameraNew />
-        </View>
-
-        <View style={styles.container2}>
-        <Image style = {{width: 300, height: 500, borderWidth: 1, borderColor: 'black', backgroundColor:'red'}} source = {{uri:Storage.Image}}/>
-          <View style={{ flexDirection: "row" }}>
-            <Button title="Load" onPress={async () => {await Storage.loadImage(); this.forceUpdate()}} />
-          </View>
-        </View>
-      </ViewPagerAndroid>
+            />
+        </SlidingCamera>
+      </View>
     );
   }
 }
+
+// <View style={styles.container}>
+//           <CameraNew />
+//         </View>
 
 const styles = {
   container: {
@@ -80,4 +113,29 @@ const styles = {
   viewPager: {
     flex: 1
   }
+
 };
+/**
+ * return (
+      <ViewPagerAndroid style={styles.viewPager}>
+
+        <View style={styles.container2}>
+        <Image style = {{width: 300, height: 500, borderWidth: 1, borderColor: 'black', backgroundColor:'red'}} source = {{uri:Storage.Image}}/>
+          <View style={{ flexDirection: "row" }}>
+            <Button title="Load" onPress={async () => {await Storage.loadImage(); this.forceUpdate()}} />
+          </View>
+        </View>
+        
+        <FlatList
+          data={this.state.topics}
+          keyExtractor={(item,id)=>item}
+          renderItem = {(item) => <View style={{flex: 1}}><Text>{item.item}</Text></View>}
+          />
+        <View>
+          <CreateTopic onTopicCreated = {(topic) => {
+            this.setState({topics: this.state.topics.push(topic)})
+          }}/>
+        </View>
+      </ViewPagerAndroid>
+    );
+ */

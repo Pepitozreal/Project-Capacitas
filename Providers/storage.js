@@ -1,4 +1,5 @@
 import {FileSystem as FS} from 'expo';
+import Topic from "../Classes/Topic.js"
 
 // WORKING DIRECTORY
 dir = Expo.FileSystem.documentDirectory + 'user_images/'
@@ -20,23 +21,79 @@ FS.getInfoAsync(dir).then(r => {
 
 
 export default Storage = {
-    saveImage: (data) => {
+
+
+    createTopic: async (topic) => {
+        topic_dir = dir + "/" + "topic_" + topic.id;
+        await FS.makeDirectoryAsync(topic_dir)
+        topic_dir = dir + "/topic_" + topic.id + "/.tda";
+        await FS.writeAsStringAsync(topic_dir, JSON.stringify(topic))
+    },
+
+    saveTopic: (topic) => {
+        topic_dir = dir + "/topic_" + topic.id + "/.tda";
+        FS.writeAsStringAsync(topic_dir, JSON.stringify(topic))
+    },
+
+    loadAllTopics: async () => {
+        return new Promise((resolve) => {
+
+            FS.readDirectoryAsync(dir).then(async (dirs) => {
+                topics = []
+                for (i = 0; i < dirs.length; i++) {
+
+                    if (dirs[i].substring(0,5) == "topic") {
+                        await FS.readAsStringAsync(dir + "/" + dirs[i] + "/.tda").then((top) => {
+
+                            top = JSON.parse(top);
+                            newTop = new Topic("")
+                            newTop.clone(top)
+                            topics.push(newTop)
+                        }).catch(() => {
+                            
+                        })
+                        
+                    }
+                }
+
+                resolve(topics)
+
+            })
+        });
+        return {}
+    },
+
+    saveImage: (data, topic) => {
         // Get path to image
         uri = data.uri;
         //Extract new path
-        newUri = dir + getFilename()
+        newUri = dir + "/topic_" + topic.id + "/" + getFilename()
         // Move image to working directory
         FS.moveAsync({from:uri, to:newUri}).catch(e => alert(e))
+        topic.push(newUri)
     },
-    loadImage: async (key) => {
-        const files = await FS.readDirectoryAsync(dir)
-        if (files.length > 0) {
-            Storage.Image = dir + files[files.length-1];
-        }
+    loadImage: async (topic, image_url) => {
+        image_uri = dir + "/" + topic.id + "/" + image_url;
+        const image = await FS.readAsStringAsync(image_url)
+        Storage.image = image
 
     },
     loadAllImages: () => {
         // Loads all images from storage
+    },
+    deleteDir: (direc) => {
+        FS.deleteAsync(direc).then(() => {
+            alert("deleted")
+        }).catch((e) => {
+            alert(e)
+        })
+    },
+    delete: async (topic) => {
+        FS.deleteAsync(dir + "/topic_" + topic.id).then(() => {
+            alert("deleted")
+        }).catch((e) => {
+            alert(e)
+        })
     },
     Image: null
 }
