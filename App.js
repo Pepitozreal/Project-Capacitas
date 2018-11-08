@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableHighlight,
   AsyncStorage,
+  ScrollView,
   Button,
   Image,
   FlatList
@@ -58,6 +59,7 @@ export default class App extends React.Component {
               this.pullup = ref;
             }
           }
+          allowSwipe = {this.pageIndex !== data.length -1}
           topic = {data[this.state.pageIndex]}
           onPictureTaken = {() => {
             Storage.loadAllTopics().then(topics => {this.setState({topics: topics})})

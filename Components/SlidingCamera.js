@@ -28,10 +28,8 @@ export default class SlidingCamera extends React.Component {
       super(props);
 
       this._panResponder = PanResponder.create({
-          onStartShouldSetPanResponder: () => true,
-          onStartShouldSetPanResponderCapture: () => true,
-          onMoveShouldSetPanResponderCapture: () => true,
-          onMoveShouldSetPanResponder: () => true,
+          onStartShouldSetPanResponder: () => this.props.canSwipe,
+          onMoveShouldSetPanResponder: () => this.props.canSwipe,
           onPanResponderGrant: () => {
           },
           onPanResponderMove: (evt, gestureState) => {
